@@ -1,0 +1,44 @@
+﻿<Properties StartupConfiguration="{AB33F52C-342B-41BC-9399-04DA4052BBB9}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ServerlessMicroservices.FunctionsApp.Voyages/Core/Domain/Voyage.cs">
+    <Files>
+      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/TripFunctions.cs" Line="29" Column="19" />
+      <File FileName="ServerlessMicroservices.Core/Filters/B2cValidationAttribute.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/LoggerService (copy).cs" Line="9" Column="2" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/Core/Domain/ServiceFactory.cs" Line="117" Column="2" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/local.settings.json" Line="11" Column="2" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/host.json" Line="1" Column="1" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Startup.cs" Line="1" Column="1" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/TrackTransactionFunction.cs" Line="34" Column="34" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="starrider" expanded="True">
+            <Node name="FunctionApps" expanded="True">
+              <Node name="ServerlessMicroservices.FunctionsApp.Voyages" expanded="True">
+                <Node name="Core" expanded="True">
+                  <Node name="Domain" expanded="True">
+                    <Node name="Voyage.cs" selected="True" />
+                  </Node>
+                </Node>
+                <Node name="Functions" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.FunctionApps.ServerlessMicroservices.FunctionsApp.Voyages PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Trips/Startup.cs" relfile="ServerlessMicroservices.FunctionsApp.Trips/Startup.cs" line="31" column="1" />
+      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="45" column="1" />
+      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="52" column="1" />
+      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="36" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

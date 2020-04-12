@@ -1,0 +1,22 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FunctionApps", "FunctionApps", "{63E91D27-C72A-4BD1-A014-48C75707A195}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerlessMicroservices.FunctionsApp.Voyages", "ServerlessMicroservices.FunctionsApp.Voyages\ServerlessMicroservices.FunctionsApp.Voyages.csproj", "{AB33F52C-342B-41BC-9399-04DA4052BBB9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB33F52C-342B-41BC-9399-04DA4052BBB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB33F52C-342B-41BC-9399-04DA4052BBB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB33F52C-342B-41BC-9399-04DA4052BBB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB33F52C-342B-41BC-9399-04DA4052BBB9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AB33F52C-342B-41BC-9399-04DA4052BBB9} = {63E91D27-C72A-4BD1-A014-48C75707A195}
+	EndGlobalSection
+EndGlobal
