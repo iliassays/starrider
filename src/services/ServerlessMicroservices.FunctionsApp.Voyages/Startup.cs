@@ -12,6 +12,11 @@ namespace ServerlessMicroservices.Voyages.Core
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
+            //builder.Services.AddDaprClient(d =>
+            //{
+                //d.UseEndpoint("")
+           // });
+
             builder.Services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.AddFilter(level => true);
@@ -25,7 +30,7 @@ namespace ServerlessMicroservices.Voyages.Core
 
             builder.Services.AddSingleton((s) =>
             {
-                MongoClient client = new MongoClient(config[Settings.MONGO_CONNECTION_STRING]);
+                MongoClient client = new MongoClient(config[Constants.MONGO_CONNECTION_STRING]);
 
                 return client;
             });

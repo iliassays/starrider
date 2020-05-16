@@ -1,0 +1,24 @@
+﻿{
+  "port": 5000,
+  "topics": [
+    {
+      "name": "TransactionEvents",
+      "subscriptions": [
+        {
+          "name": "EVGH_TransactionExternalization2Voyages",
+          "eventTypes": [ "TransactionCreated" ], /*Leave null to match all event types*/
+          "SubjectBeginsWith": "",
+          "SubjectEndsWith": "",
+          "endpointUrl": "http://localhost:7071/runtime/webhooks/EventGrid?functionName=EVGH_TransactionExternalization2Voyages",
+          "dispatchStrategy": "DefaultHttpStrategy"
+        }
+      ]
+    }
+  ],
+  "dispatchStrategies": [
+    {
+      "name": "DefaultHttpStrategy",
+      "type": "EventGridEmulator.Logic.DispatchStrategies.DefaultHttpStrategy"
+    }
+  ]
+}

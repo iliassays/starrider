@@ -1,0 +1,53 @@
+﻿{
+  "port": 5000,
+  "topics": [
+    {
+      "name": "TransactionEvents",
+      "subscriptions": [
+        {
+          "name": "EVGH_TransactionExternalization2Voyages",
+          "eventTypes": [ "TransactionCreated" ], /*Leave null to match all event types*/
+          "SubjectBeginsWith": "",
+          "SubjectEndsWith": "",
+          "endpointUrl": "http://localhost:7071/runtime/webhooks/EventGrid?functionName=TransactionCreatedExternalization2Voyages",
+          "dispatchStrategy": "DefaultHttpStrategy"
+        }
+      ]
+    },
+    {
+      "name": "VoyageEvents",
+      "subscriptions": [
+        {
+          "name": "EVGH_VoyageCreatedExternalization2Transactions",
+          "eventTypes": [ "VoyageCreated" ], /*Leave null to match all event types*/
+          "SubjectBeginsWith": "",
+          "SubjectEndsWith": "",
+          "endpointUrl": "http://localhost:7071/runtime/webhooks/EventGrid?functionName=VoyageCreatedExternalization2Voyage",
+          "dispatchStrategy": "DefaultHttpStrategy"
+        },
+        {
+          "name": "EVGH_VoyageUpdatedExternalization2Transactions",
+          "eventTypes": [ "VoyageUpdated" ], /*Leave null to match all event types*/
+          "SubjectBeginsWith": "",
+          "SubjectEndsWith": "",
+          "endpointUrl": "http://localhost:7071/runtime/webhooks/EventGrid?functionName=VoyageCreatedExternalization2Voyage",
+          "dispatchStrategy": "DefaultHttpStrategy"
+        },
+        {
+          "name": "EVGH_VoyageFailedExternalization2Transactions",
+          "eventTypes": [ "VoyageFailed" ], /*Leave null to match all event types*/
+          "SubjectBeginsWith": "",
+          "SubjectEndsWith": "",
+          "endpointUrl": "http://localhost:7071/runtime/webhooks/EventGrid?functionName=VoyageFailedExternalization2Voyage",
+          "dispatchStrategy": "DefaultHttpStrategy"
+        }
+      ]
+    }
+  ],
+  "dispatchStrategies": [
+    {
+      "name": "DefaultHttpStrategy",
+      "type": "EventGridEmulator.Logic.DispatchStrategies.DefaultHttpStrategy"
+    }
+  ]
+}
