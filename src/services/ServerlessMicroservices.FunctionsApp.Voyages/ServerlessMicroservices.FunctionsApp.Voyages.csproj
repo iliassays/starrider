@@ -4,9 +4,13 @@
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
-    <PackageReference Include="MongoDB.Driver" Version="2.10.3" />
+    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.7" />
+    <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.EventGrid" Version="2.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Functions\VoyageMakers\Domain\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -19,6 +23,23 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Functions\" />
-    <Folder Include="Core\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Functions\VoyageMakers\" />
+    <Folder Include="Functions\Voyagers\" />
+    <Folder Include="Functions\Voyages\" />
+    <Folder Include="Functions\TransactionTracker\" />
+    <Folder Include="Functions\TransactionTracker\Domain\" />
+    <Folder Include="Functions\Voyages\Domain\" />
+    <Folder Include="Functions\VoyageMakers\Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Functions\VoyageMakers\Domain\Chapter.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\ChapterReward.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\TransactionRule.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\VoyageMaker.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\VoyageMakerAggregate\TransactionRuleTypes.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\RewardAggregate\Reward.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\VoyageMakerAggregate\TransactionRule.cs" />
+    <Compile Remove="Functions\VoyageMakers\Domain\VoyageMakerAggregate\VoyageMaker.cs" />
   </ItemGroup>
 </Project>

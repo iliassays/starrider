@@ -1,14 +1,20 @@
-﻿<Properties StartupConfiguration="{AB33F52C-342B-41BC-9399-04DA4052BBB9}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="ServerlessMicroservices.FunctionsApp.Voyages/Core/Domain/Voyage.cs">
+﻿<Properties StartupConfiguration="{AB33F52C-342B-41BC-9399-04DA4052BBB9}|Default" NuGet.AddPackagesDialog.IncludePrerelease="True">
+  <MonoDevelop.Ide.Workbench ActiveDocument="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/GetVoyageMakerFunction.cs">
     <Files>
-      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/TripFunctions.cs" Line="29" Column="19" />
-      <File FileName="ServerlessMicroservices.Core/Filters/B2cValidationAttribute.cs" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/LoggerService (copy).cs" Line="9" Column="2" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Trips/Core/Domain/ServiceFactory.cs" Line="117" Column="2" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/local.settings.json" Line="11" Column="2" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/host.json" Line="1" Column="1" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Startup.cs" Line="1" Column="1" />
-      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/TrackTransactionFunction.cs" Line="34" Column="34" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Commands/SaveVoyageMakerCommand.cs" Line="25" Column="1" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/SaveRewardFunction.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Domain/VoyageMakerAggregate/TransactionRule.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Domain/VoyageMakerAggregate/VoyageMaker.cs" Line="13" Column="17" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Domain/VoyageMakerAggregate/TransactionRuleTypes.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Commands/SaveVoyageMakerChapterReward.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/SaveVoyageMakerChapter.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/SaveVoyageMakerFunction.cs" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/Domain/RewardAggregate/Reward.cs" Line="20" Column="29" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/SaveVoyageMakerChapterReward.cs" Line="62" Column="1" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/CalculateStarForTransactionFunction.cs" Line="71" Column="14" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/TransactionTracker/Domain/Transaction.cs" Line="37" Column="51" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/Voyages/GetVoyageFunction.cs" Line="27" Column="22" />
+      <File FileName="ServerlessMicroservices.FunctionsApp.Voyages/Functions/VoyageMakers/GetVoyageMakerFunction.cs" Line="21" Column="41" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
@@ -16,12 +22,18 @@
           <Node name="starrider" expanded="True">
             <Node name="FunctionApps" expanded="True">
               <Node name="ServerlessMicroservices.FunctionsApp.Voyages" expanded="True">
-                <Node name="Core" expanded="True">
-                  <Node name="Domain" expanded="True">
-                    <Node name="Voyage.cs" selected="True" />
+                <Node name="Dependencies" expanded="True">
+                  <Node name="FrameworkReferences" expanded="True" />
+                  <Node name="PackageDependencies" expanded="True" />
+                </Node>
+                <Node name="Functions" expanded="True">
+                  <Node name="VoyageMakers" expanded="True">
+                    <Node name="GetVoyageMakerFunction.cs" selected="True" />
+                  </Node>
+                  <Node name="Voyages" expanded="True">
+                    <Node name="Domain" expanded="True" />
                   </Node>
                 </Node>
-                <Node name="Functions" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -35,9 +47,6 @@
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Trips/Startup.cs" relfile="ServerlessMicroservices.FunctionsApp.Trips/Startup.cs" line="31" column="1" />
-      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="45" column="1" />
-      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="52" column="1" />
-      <Breakpoint file="/Users/ihossain/Development/starrider/src/services/ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" relfile="ServerlessMicroservices.FunctionsApp.Voyages/Functions/GetVoyageFunction.cs" line="36" column="1" />
     </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MultiItemStartupConfigurations />

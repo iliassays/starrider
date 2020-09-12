@@ -3,18 +3,16 @@
 namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
 {
     using System;
-    using System.IO;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Logging;
-    using Newtonsoft.Json;
     using Microsoft.Extensions.Configuration;
     using MongoDB.Driver;
-    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain;
     using ServerlessMicroservices.Voyages.Core;
+    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Voyage;
 
     public class GetVoyage
     {
@@ -33,8 +31,8 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             this.logger = logger;
             this.config = config;
 
-            var database = this.mongoClient.GetDatabase(config[Settings.DATABASE_NAME]);
-            voyages = database.GetCollection<Voyage>(config[Settings.COLLECTION_NAME]);
+            var database = this.mongoClient.GetDatabase(config[Constants.DATABASE_NAME]);
+            voyages = database.GetCollection<Voyage>(config[Constants.COLLECTION_NAME]);
         }
 
         [FunctionName(nameof(GetVoyage))]
