@@ -11,19 +11,18 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Configuration;
     using MongoDB.Driver;
-    using System.Linq;
     using ServerlessMicroservices.Voyages.Core;
-    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.VoyageMaker;
+    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Voyage;
 
-    public class GetVoyaageMaker
+    public class GetVoyage
     {
         private readonly MongoClient mongoClient;
         private readonly ILogger logger;
         private readonly IConfiguration config;
 
-        private readonly IMongoCollection<VoyageMaker> voyageMakers;
+        private readonly IMongoCollection<Voyage> voyages;
 
-        public GetVoyaageMaker(
+        public GetVoyage(
             MongoClient mongoClient,
             ILogger<GetVoyage> logger,
             IConfiguration config)
@@ -32,33 +31,33 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             this.logger = logger;
             this.config = config;
 
-            var database = this.mongoClient.GetDatabase(config[Constants.DATABASE_NAME]);
-            voyageMakers = database.GetCollection<VoyageMaker>("VoyageMakers");
+            var database = this.mongoClient.GetDatabase(config[Settings.DATABASE_NAME]);
+            voyages = database.GetCollection<Voyage>(config[Settings.COLLECTION_NAME]);
         }
 
-        [FunctionName(nameof(GetVoyaageMaker))]
+        [FunctionName(nameof(GetVoyage))]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "VoyageMaker/{id}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "Voyages/{id}")] HttpRequest req,
             string id)
         {
-            logger.LogInformation("GetVoyageMaker triggered...");
+            logger.LogInformation("GetVoyage triggered...");
 
             try
             {
                 //await Utilities.ValidateToken(req);
-                var result = await voyageMakers.Find(trip => trip.Id == id).FirstOrDefaultAsync();
+                var result = await voyages.Find(trip => trip.Id == id).FirstOrDefaultAsync();
 
                 if(result == null)
                 {
                     logger.LogInformation("That item does not exist!");
-                    throw new Exception($"Couldn't find voyage maker with id: {id}");
+                    throw new Exception($"Couldn't find voyage with id: {id}");
                 }
                 
                 return new OkObjectResult(result);
             }
             catch(Exception e)
             {
-                var error = $"GetVoyageMaker failed: {e.Message}";
+                var error = $"GetVoyage failed: {e.Message}";
                 logger.LogError(error);
 
                 return new BadRequestObjectResult(error);

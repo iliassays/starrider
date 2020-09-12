@@ -13,9 +13,8 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
     using Newtonsoft.Json;
     using Microsoft.Extensions.Configuration;
     using MongoDB.Driver;
+    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain;
     using ServerlessMicroservices.Voyages.Core;
-    using ServerlessMicroservices.Voyages.Infrastructure;
-    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Transaction;
 
     public class TransactionTracker
     {
@@ -34,8 +33,8 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             this.logger = logger;
             this.config = config;
 
-            var database = this.mongoClient.GetDatabase(config[Constants.DATABASE_NAME]);
-            transactions = database.GetCollection<Transaction>("Transactions");
+            var database = this.mongoClient.GetDatabase(config[Settings.DATABASE_NAME]);
+            transactions = database.GetCollection<Transaction>("Transaction");
         }
 
         [FunctionName(nameof(TransactionTracker))]
@@ -48,14 +47,29 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             {
                 string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 
-                var transaction = JsonConvert.DeserializeObject<Transaction>(requestBody);
+                var input = JsonConvert.DeserializeObject<Transaction>(requestBody);
 
-                transaction.Status = Status.New;
+                //Validate here
+                var transaction = new Transaction
+                {
+                    CustomerNumber = input.CustomerNumber,
+                    MobileNumber = input.MobileNumber,
+                    Email = input.Email,
+                    OrganizationId = input.OrganizationId,
+                    Amount = input.Amount
+                };
 
-                await transactions.InsertOneAsync(transaction);
-                await RaiseTransactionCreatedEvent(transaction, Constants.EVG_EVENT_TRANSACTION_CREATED);
-
-                return new OkObjectResult(transaction);
+                try
+                {
+                    transactions.InsertOne(transaction);
+                    return new OkObjectResult(transactions);
+                }
+                catch (Exception ex)
+                {
+                    //Log the data so that we can later create it in case of error
+                    logger.LogError($"Exception thrown: {ex.Message}");
+                    return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+                }
             }
             catch(Exception e)
             {
@@ -64,27 +78,6 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
 
                 return new BadRequestObjectResult(error);
             }
-        }
-
-        private static async Task RaiseTransactionCreatedEvent(Transaction transaction, string subject)
-        {
-            await EventPublisher.TriggerEventGridTopic<TransactionEvent>(null,
-                new TransactionEvent() {
-                    TransactionId = transaction.Id,
-                    Amount = transaction.Amount,
-                    BranchId = transaction.BranchId,
-                    OrganizationId = transaction.OrganizationId,
-                    CreatedAt = transaction.CreatedAt,
-                    UpdatedAt = transaction.UpdatedAt,
-                    CreatedByUser = transaction.createdByUser,
-                    Type = transaction.Type,
-                    Email = transaction.Email,
-                    MobileNumber = transaction.MobileNumber
-                },
-                Constants.EVG_EVENT_TRANSACTION_CREATED,
-                subject,
-                Settings.GetTransactionExternalizationsEventGridTopicUrl(),
-                Settings.GetTransactionExternalizationsEventGridTopicApiKey());
         }
     }
 }

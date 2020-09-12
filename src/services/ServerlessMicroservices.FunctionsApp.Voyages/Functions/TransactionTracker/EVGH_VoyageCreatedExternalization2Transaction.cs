@@ -15,17 +15,19 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
     using ServerlessMicroservices.Voyages.Core;
     using Microsoft.Azure.WebJobs.Extensions.EventGrid;
     using Microsoft.Azure.EventGrid.Models;
-    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Transaction;
+    using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Voyage;
+    using ServerlessMicroservices.Voyages.Infrastructure;
+    using System.Collections.Generic;
 
-    public class VoyageCreatedExternalization2Transaction
+    public class EVGH_TransactionExternalization2Voyages
     {
         private readonly MongoClient mongoClient;
         private readonly ILogger logger;
         private readonly IConfiguration config;
 
-        private readonly IMongoCollection<Transaction> transactions;
+        private readonly IMongoCollection<Voyage> voyages;
 
-        public VoyageCreatedExternalization2Transaction(
+        public EVGH_TransactionExternalization2Voyages(
             MongoClient mongoClient,
             ILogger<TransactionTracker> logger,
             IConfiguration config)
@@ -34,15 +36,15 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             this.logger = logger;
             this.config = config;
 
-            var database = this.mongoClient.GetDatabase(config[Constants.DATABASE_NAME]);
-            transactions = database.GetCollection<Transaction>("Transactions");
+            var database = this.mongoClient.GetDatabase(config[Settings.DATABASE_NAME]);
+            voyages = database.GetCollection<Voyage>(config[Settings.COLLECTION_NAME]);
         }
 
-        [FunctionName(nameof(VoyageCreatedExternalization2Transaction))]
-        public async void Run(
+        [FunctionName(nameof(EVGH_TransactionExternalization2Voyages))]
+        public async Task<IActionResult> Run(
             [EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
         {
-            log.LogInformation($"Process_VoyageCreatedExternalization2Transaction triggered....EventGridEvent" +
+            log.LogInformation($"Process_TransactionExternalization2Voyages triggered....EventGridEvent" +
                             $"\n\tId:{ eventGridEvent.Id }" +
                             $"\n\tTopic:{ eventGridEvent.Topic }" +
                             $"\n\tSubject:{ eventGridEvent.Subject }" +
@@ -51,29 +53,115 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
 
             try
             {
-                VoyageCreatedEvent @event = JsonConvert.DeserializeObject<VoyageCreatedEvent>(eventGridEvent.Data.ToString());
-
-                
-                var transaction = await transactions.Find(t => t.Id == @event.TransactionId).FirstOrDefaultAsync();
+                Transaction transaction = JsonConvert.DeserializeObject<Transaction>(eventGridEvent.Data.ToString());
 
                 if (transaction == null)
+                    throw new Exception("transaction is null!");
+
+                log.LogInformation($"Process_TransactionExternalization2Voyages customer {transaction.MobileNumber}");
+
+               
+                if (transaction == null || string.IsNullOrEmpty(transaction.MobileNumber))
+                    throw new Exception("A voyager with a valid mobile number must be attached to the voyage!!");
+
+                var existingVoyage = await voyages.Find(v => v.Pilot.OrganizerId == transaction.OrganizationId &&
+                   v.Voyager.MobileNumber == transaction.MobileNumber).FirstOrDefaultAsync();
+
+                var voyage = await ConvertTransactionToVoyages(transaction ,existingVoyage);
+                // get the RewardRules
+                // 
+                if (existingVoyage == null)
                 {
-                    logger.LogInformation($"Process_VoyageCreatedExternalization2Transaction: That item does not exist: {@event.TransactionId}");
-                    throw new Exception($"Couldn't find voyage with id: {@event.TransactionId}");
+                    voyages.InsertOne(voyage);
+                    await RaiseVoyagesCreatedEvent(transaction, voyage, Settings.EVG_EVENT_VOYAGES_CREATED);
+                }
+                else
+                {
+                    var replacedItem = voyages.ReplaceOne(v => v.Id == voyage.Id, voyage);
+                    await RaiseVoyagesUpdatedEvent(transaction, voyage, Settings.EVG_EVENT_VOYAGES_UPDATED);
                 }
 
-                transaction.OrganizationName = @event.OrganizationName;
-                transaction.StarCollected = @event.StarCollected;
-                transaction.VoyageId = @event.VoyageId;
-                transaction.Status = Status.Processed;
-
-                var replacedItem = await transactions.ReplaceOneAsync(t => t.Id == transaction.Id, transaction);
+                return new OkResult();
             }
             catch (Exception e)
             {
-                var error = $"VoyageCreatedExternalization2Transaction failed: {e.Message}";
+                var error = $"TransactionTracker failed: {e.Message}";
                 logger.LogError(error);
+                await RaiseVoyagesFailedEvent(transaction, Settings.EVG_EVENT_TRANSACTION_CREATED);
+
+                return new BadRequestObjectResult(error);
             }
+        }
+
+        private async Task<Voyage> ConvertTransactionToVoyages(Transaction transaction, Voyage voyage)
+        {
+            var tripMakerInfo = await HttpHelper.Get<VoyageMaker>(null, Settings.GetTripMakerApiUrl(), new Dictionary<string, string>());
+            //List<PassengerItem> passengers = await Utilities.Get<List<PassengerItem>>(null, $"{passengersUrl}/api/passengers", new Dictionary<string, string>());
+
+            if (tripMakerInfo == null)
+            {
+                throw new Exception("No trip maker found");
+            }
+
+            voyage.Pilot = new Pilot
+            {
+                OrganizerId = tripMakerInfo.Id,
+                OrganizationName = tripMakerInfo.OrganizationName
+            };
+
+            //if chapter is not set, build Voyages chaper from trip maker chapter
+            if(voyage.VoyageChapters == null )
+            {
+                voyage.VoyageChapters = new List<VoyageChapter>();
+
+                tripMakerInfo.Chapters.ForEach(c =>
+                {
+                    voyage.VoyageChapters.Add(
+                        new VoyageChapter()
+                        {
+                            ChapterDefination = c
+                        }
+                    );
+                });
+            }
+
+            voyage.ApplyNewlyAddedStar(await CalculateStarForTransaction(transaction));
+
+            return voyage;
+        }
+
+        private async Task<int> CalculateStarForTransaction(Transaction transaction)
+        {
+            var starCount = await HttpHelper.Get<int>(null, Settings.CalculateStarForTransactionApiUrl(), new Dictionary<string, string>());
+
+            return starCount;
+        }
+
+        private static async Task RaiseVoyagesCreatedEvent(Transaction transaction, Voyage voyage,  string subject)
+        {
+            await EventPublisher.TriggerEventGridTopic<Transaction>(null, transaction,
+                Settings.EVG_EVENT_VOYAGES_CREATED,
+                subject,
+                Settings.GetTransactionExternalizationsEventGridTopicUrl(),
+                Settings.GetTransactionExternalizationsEventGridTopicApiKey());
+        }
+
+        private static async Task RaiseVoyagesUpdatedEvent(Transaction transaction, Voyage voyage, string subject)
+        {
+            await EventPublisher.TriggerEventGridTopic<Transaction>(null, transaction,
+                Settings.EVG_EVENT_VOYAGES_UPDATED,
+                subject,
+                Settings.GetTransactionExternalizationsEventGridTopicUrl(),
+                Settings.GetTransactionExternalizationsEventGridTopicApiKey());
+        }
+
+        private static async Task RaiseVoyagesFailedEvent(Transaction transaction, Voyage voyage, string subject)
+        {
+            await EventPublisher.TriggerEventGridTopic<Transaction>(null, transaction,
+                Settings.EVG_EVENT_VOYAGES_FAILED,
+                subject,
+                Settings.GetTransactionExternalizationsEventGridTopicUrl(),
+                Settings.GetTransactionExternalizationsEventGridTopicApiKey());
         }
     }
 }

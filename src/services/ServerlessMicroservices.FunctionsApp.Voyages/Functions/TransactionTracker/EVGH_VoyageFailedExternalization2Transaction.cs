@@ -16,8 +16,10 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
     using Microsoft.Azure.WebJobs.Extensions.EventGrid;
     using Microsoft.Azure.EventGrid.Models;
     using ServerlessMicroservices.FunctionsApp.Voyages.Core.Domain.Transaction;
+    using ServerlessMicroservices.Voyages.Infrastructure;
+    using System.Collections.Generic;
 
-    public class VoyageFailedExternalization2Transaction
+    public class VoyageCreatedExternalization2Transaction
     {
         private readonly MongoClient mongoClient;
         private readonly ILogger logger;
@@ -25,7 +27,7 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
 
         private readonly IMongoCollection<Transaction> transactions;
 
-        public VoyageFailedExternalization2Transaction(
+        public VoyageCreatedExternalization2Transaction(
             MongoClient mongoClient,
             ILogger<TransactionTracker> logger,
             IConfiguration config)
@@ -34,15 +36,15 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
             this.logger = logger;
             this.config = config;
 
-            var database = this.mongoClient.GetDatabase(config[Constants.DATABASE_NAME]);
+            var database = this.mongoClient.GetDatabase(config[Settings.DATABASE_NAME]);
             transactions = database.GetCollection<Transaction>("Transactions");
         }
 
-        [FunctionName(nameof(VoyageFailedExternalization2Transaction))]
-        public async void Run(
+        [FunctionName(nameof(VoyageCreatedExternalization2Transaction))]
+        public async Task<IActionResult> Run(
             [EventGridTrigger]EventGridEvent eventGridEvent, ILogger log)
         {
-            log.LogInformation($"Process_VoyageFailedExternalization2Transaction triggered....EventGridEvent" +
+            log.LogInformation($"Process_VoyageCreatedExternalization2Transaction triggered....EventGridEvent" +
                             $"\n\tId:{ eventGridEvent.Id }" +
                             $"\n\tTopic:{ eventGridEvent.Topic }" +
                             $"\n\tSubject:{ eventGridEvent.Subject }" +
@@ -51,25 +53,31 @@ namespace ServerlessMicroservices.FunctionsApp.Voyages.Function
 
             try
             {
-                VoyageFailedEvent @event = JsonConvert.DeserializeObject<VoyageFailedEvent>(eventGridEvent.Data.ToString());
+                VoyageCreatedEvent @event = JsonConvert.DeserializeObject<VoyageCreatedEvent>(eventGridEvent.Data.ToString());
+
                 
-                var transaction = await transactions.Find(t => t.Id == @event.TransactionId).FirstOrDefaultAsync();
+                var transaction = await transactions.Find(t => t.Id == @event.Id).FirstOrDefaultAsync();
 
                 if (transaction == null)
                 {
-                    logger.LogInformation($"Process_VoyageFailedExternalization2Transaction: That item does not exist: {@event.TransactionId}");
+                    logger.LogInformation($"Process_VoyageCreatedExternalization2Transaction: That item does not exist: {@event.TransactionId}");
                     throw new Exception($"Couldn't find voyage with id: {@event.TransactionId}");
                 }
 
-                transaction.Error = @event.FailReason;
-                transaction.Status = Status.Failed;
+                transaction.OrganizationName = @event.OrganizationName;
+                transaction.StarCollected = @event.StarCollected;
+                transaction.VoyageId = @event.VoyageId;
 
                 var replacedItem = await transactions.ReplaceOneAsync(t => t.Id == transaction.Id, transaction);
+
+                return new OkResult();
             }
             catch (Exception e)
             {
-                var error = $"VoyageFailedExternalization2Transaction failed: {e.Message}";
+                var error = $"VoyageCreatedExternalization2Transaction failed: {e.Message}";
                 logger.LogError(error);
+                
+                return new BadRequestObjectResult(error);
             }
         }
     }
